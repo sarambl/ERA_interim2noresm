@@ -125,7 +125,7 @@ fi
 
 # ------------------------------------------------------------
 # Start calculations
-
+#TODO remove if possible to download netcdf
 #convert surface data to netCDF
 if [ -f ${path}/rawdata/${year}/surf_${year}.grb ]
 then
@@ -146,6 +146,7 @@ do
   fname=$(basename "$file_in" .grb)
   echo -ne "Adding surface fields to 3D data " $i"/"$num_files "\r"
   # convert 3D grib file to netCDF file
+  # TODO remove if download netcdf
   cdo -s -t ecmwf -f nc copy $file_in tmp_${fname}.nc
 
   # add corresponding surface data to 3D file

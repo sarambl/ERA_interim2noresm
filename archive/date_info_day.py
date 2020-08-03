@@ -7,14 +7,15 @@ Insert information about the starting date, the length of the year and the lengt
 Remember also to change the time.units so it matches the first date of your file. 
 
 Run it like this: python date_info_day.py 2001-01-01
+
+Author: Inger Helene Hafsahl Karset
 """
 
 #Import required modules
 import sys
 from netCDF4 import Dataset
-from scitools import *
 from numpy import dtype
-
+# %%
 
 # Read in netCDF-files
 date = str(sys.argv[1])
