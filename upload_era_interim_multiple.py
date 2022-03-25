@@ -72,7 +72,7 @@ def import_monthly_files(start_yearmonth, end_yearmonth, fieldtype='3D'):
     return
 
 
-def get_monthly_file(year, month, fieldtype='3D'):
+def get_monthly_file(year, month: int, fieldtype='3D'):
     """
     Download file for month
     :param year:

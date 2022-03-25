@@ -1,4 +1,3 @@
-
 """
 Making date and datesec arrays in netcdf format that we can
 add to the ERA-interim metdata file so it can be used to nudge NorESM
@@ -12,9 +11,10 @@ Run it like this: python date_info_day.py 2001-01-01
 Author: Inger Helene Hafsahl Karset
 """
 
-#Import required modules
 from netCDF4 import Dataset
 from numpy import dtype
+
+
 # %%
 
 def date_info_day(date_str, infile):
@@ -32,36 +32,35 @@ def date_info_day(date_str, infile):
     :param infile:
     :return:
     """
-    #date_str = str(sys.argv[1])
-    #infile = './' + date_str + '.nc'
+    # date_str = str(sys.argv[1])
+    # infile = './' + date_str + '.nc'
 
     # prepare date
-    year,mon,day = date_str.split('-')
+    year, mon, day = date_str.split('-')
     year_num = int(float(year))
     mon_num = int(float(mon))
     day_num = int(float(day))
 
-
     datesec_calc = []
     val_pr_day = 4
-    secstep = 86400/val_pr_day
-    sec = [0, 1*secstep, 2*secstep, 3*secstep]
+    secstep = 86400 / val_pr_day
+    sec = [0, 1 * secstep, 2 * secstep, 3 * secstep]
     for j in sec:
         datesec_calc.append(j)
 
     # Open a netCDF file for appending:
-    ncfile = Dataset(infile,'a')
-    #time_in = ncfile.variables['time'][:]
-    #ncfile = Dataset('date_datesec' + date + '.nc','w')
+    ncfile = Dataset(infile, 'a')
+    # time_in = ncfile.variables['time'][:]
+    # ncfile = Dataset('date_datesec' + date + '.nc','w')
 
     # Create the variable (4 byte integer in this case)
     # first argument is name of variable, second is datatype, third is
     # a tuple with the names of dimensions.
-    date_str = ncfile.createVariable('date',dtype('int32').char,('time'))
-    datesec = ncfile.createVariable('datesec',dtype('int32').char,('time'))
+    date_str = ncfile.createVariable('date', dtype('int32').char, 'time')
+    datesec = ncfile.createVariable('datesec', dtype('int32').char, 'time')
 
     # Write data to variable:
-    date_str[:] = year_num*10000+mon_num*100+day_num
+    date_str[:] = year_num * 10000 + mon_num * 100 + day_num
     datesec[:] = datesec_calc
 
     # Add attributes to the variables:

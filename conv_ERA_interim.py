@@ -70,36 +70,33 @@ def date_info_day(date_str, infile):
     :param infile:
     :return:
     """
-    #date_str = str(sys.argv[1])
-    #infile = './' + date_str + '.nc'
 
     # prepare date
-    year,mon,day = date_str.split('-')
+    year, mon, day = date_str.split('-')
     year_num = int(float(year))
     mon_num = int(float(mon))
     day_num = int(float(day))
 
-
     datesec_calc = []
     val_pr_day = 4
-    secstep = 86400/val_pr_day
-    sec = [0, 1*secstep, 2*secstep, 3*secstep]
+    secstep = 86400 / val_pr_day
+    sec = [0, 1 * secstep, 2 * secstep, 3 * secstep]
     for j in sec:
         datesec_calc.append(j)
 
     # Open a netCDF file for appending:
-    ncfile = Dataset(infile,'a')
-    #time_in = ncfile.variables['time'][:]
-    #ncfile = Dataset('date_datesec' + date + '.nc','w')
+    ncfile = Dataset(infile, 'a')
+    # time_in = ncfile.variables['time'][:]
+    # ncfile = Dataset('date_datesec' + date + '.nc','w')
 
     # Create the variable (4 byte integer in this case)
     # first argument is name of variable, second is datatype, third is
     # a tuple with the names of dimensions.
-    date_str = ncfile.createVariable('date',dtype('int32').char,('time'))
-    datesec = ncfile.createVariable('datesec',dtype('int32').char,('time'))
+    date_str = ncfile.createVariable('date', dtype('int32').char, 'time')
+    datesec = ncfile.createVariable('datesec', dtype('int32').char, 'time')
 
     # Write data to variable:
-    date_str[:] = year_num*10000+mon_num*100+day_num
+    date_str[:] = year_num * 10000 + mon_num * 100 + day_num
     datesec[:] = datesec_calc
 
     # Add attributes to the variables:
@@ -175,7 +172,7 @@ def get_fl_raw(fieldtype, year):
     """
     fl_3D = glob(str(input_folder) + f'/*{year}{fieldtype}.nc')
     print(f'Checking for files with pattern  "/*{year}{fieldtype}.nc" in folder: \n {input_folder}')
-    #print(input_folder)
+    # print(input_folder)
     fl_check = [fn_raw_nc(i, year, fieldtype) for i in range(1, 13)]
     fl_check2 = [Path(f).name for f in fl_3D]
     if set(fl_check) != set(fl_check2):
@@ -225,7 +222,6 @@ def input_fn_from_ym(year, month):
 # %%
 def main(year):
     print('Getting fl_raw')
-
 
     fl_3D = get_fl_raw('3D', year)
     print(fl_3D)
