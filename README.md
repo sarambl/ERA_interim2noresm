@@ -24,7 +24,7 @@ Run:
 ```shell
 python make_res_file.py <history_file_in_correct_grid>
 # Download data
-python upload_era_interim_multiple.py <start_year> <end_year>
+python download_ERA_grb_files.py <start_year> <end_year>
 # convert each year: 
 conv_ERA_interim.py <start_year>
 conv_ERA_interim.py <next_year>
@@ -33,5 +33,5 @@ conv_ERA_interim.py <end_year>
 ```
 Scripts found here:
 - [make_res_file.py](make_res_file.py)
-- [upload_era_interim_multiple.py](upload_era_interim_multiple.py)
+- [download_ERA_grb_files.py](download_ERA_grb_files.py)
 - [conv_ERA_interim.py](conv_ERA_interim.py)

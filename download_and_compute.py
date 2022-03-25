@@ -1,7 +1,7 @@
 import sys
 
 import conv_ERA_interim
-import upload_era_interim_multiple
+import download_ERA_grb_files
 import make_res_file
 
 if __name__ == '__main__':
@@ -16,9 +16,9 @@ if __name__ == '__main__':
 
     # Download stuff
     for field_type in ['3D', 'surf']:
-        upload_era_interim_multiple.import_years(syear,
-                                                 eyear,
-                                                 fieldtype=field_type)
+        download_ERA_grb_files.import_years(syear,
+                                            eyear,
+                                            fieldtype=field_type)
     # Convert to NorESM format
     for year in range(syear, eyear + 1):
         conv_ERA_interim.main(year)

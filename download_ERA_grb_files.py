@@ -139,7 +139,7 @@ def server_retrieval(input_dic):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print('Correct usage: python upload_era_interim_multiple.py <star_year> <end_year>')
+        print('Correct usage: python download_ERA_grb_files.py <star_year> <end_year>')
         sys.exit()
     if len(sys.argv) > 3:
         field_type = sys.argv[3]
