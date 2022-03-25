@@ -40,6 +40,7 @@ def import_years(start_y, end_y, fieldtype='3D'):
     :param fieldtype:
     :return:
     """
+
     import_monthly_files([start_y, 1], [end_y, 12], fieldtype=fieldtype)
     return
 
@@ -87,6 +88,9 @@ def get_monthly_file(year, month, fieldtype='3D'):
     # ofn = (dic_month[month]+str(year)+f'{fieldtype}.nc')
     ofn = (dic_month[month] + str(year) + f'{fieldtype}.grb')
     output_fname = outfolder / ofn  # 'from_%s_to_%s.grb'%(start_date, end_date)
+
+    outfolder.mkdir(parents=True, exist_ok=True)
+
     input_dic = get_input_dic(date, output_fname, fieldtype=fieldtype)
     print(input_dic)
     server_retrieval(input_dic)

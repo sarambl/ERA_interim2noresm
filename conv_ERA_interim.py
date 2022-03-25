@@ -9,11 +9,13 @@ Based on conv_ERA-interim.sh:
 
 """
 import os
-import sys
 from glob import glob
 from pathlib import Path
 from subprocess import run
-
+import sys
+from netCDF4 import Dataset
+from numpy import dtype
+# %%
 import xarray as xr
 
 from path_defs import dic_month, data_folder, input_folder, res_file, res_file_T, vct_file, tmp_folder, out_folder
@@ -53,6 +55,62 @@ def grb2nc(fn, output_folder=input_folder):
     return
 
 
+def date_info_day(date_str, infile):
+    """
+    Making date and datesec arrays in netcdf format that we can
+    add to the ERA-interim metdata file so it can be used to nudge NorESM
+
+    Required modifications before you run it:
+    Insert information about the starting date, the length of the year and the length of february
+    Remember also to change the time.units so it matches the first date of your file.
+
+    Author: Sara Blichner modified Inger Helene Hafsahl Karset's code
+
+    :param date_str:
+    :param infile:
+    :return:
+    """
+    #date_str = str(sys.argv[1])
+    #infile = './' + date_str + '.nc'
+
+    # prepare date
+    year,mon,day = date_str.split('-')
+    year_num = int(float(year))
+    mon_num = int(float(mon))
+    day_num = int(float(day))
+
+
+    datesec_calc = []
+    val_pr_day = 4
+    secstep = 86400/val_pr_day
+    sec = [0, 1*secstep, 2*secstep, 3*secstep]
+    for j in sec:
+        datesec_calc.append(j)
+
+    # Open a netCDF file for appending:
+    ncfile = Dataset(infile,'a')
+    #time_in = ncfile.variables['time'][:]
+    #ncfile = Dataset('date_datesec' + date + '.nc','w')
+
+    # Create the variable (4 byte integer in this case)
+    # first argument is name of variable, second is datatype, third is
+    # a tuple with the names of dimensions.
+    date_str = ncfile.createVariable('date',dtype('int32').char,('time'))
+    datesec = ncfile.createVariable('datesec',dtype('int32').char,('time'))
+
+    # Write data to variable:
+    date_str[:] = year_num*10000+mon_num*100+day_num
+    datesec[:] = datesec_calc
+
+    # Add attributes to the variables:
+    date_str.long_name = 'current date (YYYYMMDD)'
+    datesec.long_name = 'current seconds of current date'
+
+    # close the file.
+    ncfile.close()
+    return
+
+
 def change_unit_time_and_save_final(year, mon_num, fn, day_num=None):
     """
     Unit of time needs to be changed and then final file is saved.
@@ -81,6 +139,8 @@ def change_unit_time_and_save_final(year, mon_num, fn, day_num=None):
     com2 = f'ncap2 -s time=time/24  {fn} {final_out_fn}'
     print(com2)
     run(com2, shell=True)
+    date_info_day(date, final_out_fn)
+
     return
 
 
@@ -114,6 +174,8 @@ def get_fl_raw(fieldtype, year):
     :return:
     """
     fl_3D = glob(str(input_folder) + f'/*{year}{fieldtype}.nc')
+    print(f'Checking for files with pattern  "/*{year}{fieldtype}.nc" in folder: \n {input_folder}')
+    #print(input_folder)
     fl_check = [fn_raw_nc(i, year, fieldtype) for i in range(1, 13)]
     fl_check2 = [Path(f).name for f in fl_3D]
     if set(fl_check) != set(fl_check2):
@@ -162,6 +224,9 @@ def input_fn_from_ym(year, month):
 
 # %%
 def main(year):
+    print('Getting fl_raw')
+
+
     fl_3D = get_fl_raw('3D', year)
     print(fl_3D)
     # %%
@@ -250,6 +315,8 @@ def main(year):
         pd = Path(fd)
         v_fp = pd.parent / f'vert_{pd.name}'
         pout = v_fp.parent / f'horiz_{v_fp.name}'
+        if pout.is_file():
+            continue
         cdo_comm = f'cdo -s remap,{res_file_T},{p_weights} {v_fp} {pout}'
         print(cdo_comm)
         run(cdo_comm, shell=True)
